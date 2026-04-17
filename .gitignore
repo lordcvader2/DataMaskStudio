@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+release/
+*.exe
+*.zip
+*.msi
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test files (not part of the project)
+test_files/
+
+# Temporary files
+*.tmp
+.cache/
+.temp/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Developer files
+*.bak
+*~

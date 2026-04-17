@@ -1,0 +1,294 @@
+﻿/**
+ * DataMaskStudio - 全局样式表
+ * 包含 Tailwind CSS 指令和自定义样式
+ */
+
+/* ==================== Tailwind CSS 指令 ==================== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==================== CSS 自定义变量 ==================== */
+:root {
+  /* 主色调 */
+  --color-primary: #1890FF;
+  --color-primary-light: #E6F7FF;
+  --color-primary-dark: #096DD9;
+
+  /* 功能色 */
+  --color-danger: #FF4D4F;
+  --color-safe: #52C41A;
+  --color-warning: #FAAD14;
+
+  /* 背景色 */
+  --color-bg-base: #F5F7FA;
+  --color-bg-card: #FFFFFF;
+  --color-bg-hover: #F0F2F5;
+
+  /* 文字色 */
+  --color-text-primary: #1F2937;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+
+  /* 边框色 */
+  --color-border: #E5E7EB;
+  --color-border-light: #F3F4F6;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* 过渡动画 */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* 深色模式变量 */
+.dark {
+  --color-bg-base: #1A1B1E;
+  --color-bg-card: #25262B;
+  --color-bg-hover: #2C2E33;
+  --color-text-primary: #E5E7EB;
+  --color-text-secondary: #9CA3AF;
+  --color-text-muted: #6B7280;
+  --color-border: #374151;
+  --color-border-light: #1F2937;
+}
+
+/* ==================== 基础布局样式 ==================== */
+
+/* 全局盒模型 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 基础字体和颜色 */
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-base);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 根容器 */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== 通用组件样式 ==================== */
+
+/* 拖拽区域 */
+.drop-zone {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  background-color: var(--color-bg-card);
+}
+
+.drop-zone:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.drop-zone.drag-over {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  transform: scale(1.01);
+  box-shadow: var(--shadow-md);
+}
+
+.drop-zone-icon {
+  font-size: 48px;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.drop-zone-text {
+  font-size: 16px;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.drop-zone-hint {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* 预览区域 */
+.preview-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.preview-panel {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  min-height: 200px;
+  max-height: 400px;
+  overflow: auto;
+}
+
+.preview-panel.original {
+  border-left: 3px solid var(--color-danger);
+}
+
+.preview-panel.masked {
+  border-left: 3px solid var(--color-safe);
+}
+
+.preview-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preview-content {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+/* 敏感内容高亮标注 */
+.sensitive-highlight {
+  background-color: rgba(255, 77, 79, 0.15);
+  color: var(--color-danger);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.safe-highlight {
+  background-color: rgba(82, 196, 26, 0.15);
+  color: var(--color-safe);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+/* 状态栏 */
+.status-bar {
+  background-color: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.status-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-safe);
+}
+
+.status-dot.processing {
+  background-color: var(--color-warning);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ==================== Ant Design 组件覆盖样式 ==================== */
+
+/* 按钮组 */
+.ant-btn-group {
+  gap: 12px;
+}
+
+/* 卡片样式微调 */
+.ant-card {
+  border-radius: var(--radius-md);
+}
+
+/* 单选按钮组 */
+.ant-radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+/* 分割线 */
+.section-divider {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ==================== 工具类 ==================== */
+
+/* Flexbox 工具 */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 文字省略 */
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-muted);
+}
