@@ -1,6 +1,5 @@
-﻿/**
- * DataMaskStudio - 全局样式表
- * 包含 Tailwind CSS 指令和自定义样式
+/**
+ * DataMaskStudio - 全局样式表 v1.1.0
  */
 
 /* ==================== Tailwind CSS 指令 ==================== */
@@ -10,46 +9,30 @@
 
 /* ==================== CSS 自定义变量 ==================== */
 :root {
-  /* 主色调 */
   --color-primary: #1890FF;
   --color-primary-light: #E6F7FF;
   --color-primary-dark: #096DD9;
-
-  /* 功能色 */
   --color-danger: #FF4D4F;
   --color-safe: #52C41A;
   --color-warning: #FAAD14;
-
-  /* 背景色 */
   --color-bg-base: #F5F7FA;
   --color-bg-card: #FFFFFF;
   --color-bg-hover: #F0F2F5;
-
-  /* 文字色 */
   --color-text-primary: #1F2937;
   --color-text-secondary: #6B7280;
   --color-text-muted: #9CA3AF;
-
-  /* 边框色 */
   --color-border: #E5E7EB;
   --color-border-light: #F3F4F6;
-
-  /* 阴影 */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-
-  /* 圆角 */
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
-
-  /* 过渡动画 */
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
 }
 
-/* 深色模式变量 */
 .dark {
   --color-bg-base: #1A1B1E;
   --color-bg-card: #25262B;
@@ -61,147 +44,161 @@
   --color-border-light: #1F2937;
 }
 
-/* ==================== 基础布局样式 ==================== */
+/* ==================== 基础布局 ==================== */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* 全局盒模型 */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/* 基础字体和颜色 */
 body {
   font-family: 'Microsoft YaHei', 'PingFang SC', 'Segoe UI', sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--color-text-primary);
   background-color: var(--color-bg-base);
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* 根容器 */
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+#root { min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ==================== 通用组件样式 ==================== */
-
-/* 拖拽区域 */
+/* ==================== 拖拽区域 ==================== */
 .drop-zone {
   border: 2px dashed var(--color-border);
   border-radius: var(--radius-lg);
-  padding: 48px 24px;
+  padding: 40px 24px;
   text-align: center;
   cursor: pointer;
   transition: all var(--transition-normal);
   background-color: var(--color-bg-card);
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.drop-zone:hover {
-  border-color: var(--color-primary);
-  background-color: var(--color-primary-light);
+.drop-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(24,144,255,0.03) 0%, rgba(24,144,255,0.08) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
 }
 
+.drop-zone:hover { border-color: var(--color-primary); }
+.drop-zone:hover::before { opacity: 1; }
 .drop-zone.drag-over {
   border-color: var(--color-primary);
   background-color: var(--color-primary-light);
   transform: scale(1.01);
   box-shadow: var(--shadow-md);
 }
+.drop-zone.drag-over::before { opacity: 2; }
 
 .drop-zone-icon {
-  font-size: 48px;
+  font-size: 44px;
   color: var(--color-primary);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  transition: transform var(--transition-normal);
 }
+.drop-zone:hover .drop-zone-icon { transform: translateY(-4px); }
 
 .drop-zone-text {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--color-text-primary);
-  margin-bottom: 8px;
+  margin: 0 0 6px !important;
+  font-weight: 500;
 }
-
 .drop-zone-hint {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-muted);
+  margin: 0 !important;
 }
 
-/* 预览区域 */
+/* ==================== 预览区域 ==================== */
 .preview-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
+  align-items: start;
 }
 
 .preview-panel {
   background-color: var(--color-bg-card);
   border-radius: var(--radius-md);
-  padding: 16px;
   border: 1px solid var(--color-border);
-  min-height: 200px;
-  max-height: 400px;
+  min-height: 220px;
+  max-height: 420px;
   overflow: auto;
+  transition: box-shadow var(--transition-normal);
 }
 
-.preview-panel.original {
-  border-left: 3px solid var(--color-danger);
-}
-
-.preview-panel.masked {
-  border-left: 3px solid var(--color-safe);
-}
+.preview-panel:hover { box-shadow: var(--shadow-sm); }
+.preview-panel.original { border-left: 3px solid var(--color-danger); }
+.preview-panel.masked  { border-left: 3px solid var(--color-safe); }
 
 .preview-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .preview-content {
-  font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 13px;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 12.5px;
   white-space: pre-wrap;
   word-break: break-all;
   color: var(--color-text-primary);
-  line-height: 1.6;
+  line-height: 1.7;
+  max-height: 340px;
+  overflow-y: auto;
 }
 
-/* 敏感内容高亮标注 */
+/* ==================== 高亮样式 ==================== */
 .sensitive-highlight {
-  background-color: rgba(255, 77, 79, 0.15);
-  color: var(--color-danger);
-  padding: 1px 4px;
-  border-radius: 3px;
+  background-color: rgba(255, 77, 79, 0.13);
+  color: #DC2626;
+  padding: 1px 5px;
+  border-radius: 4px;
   font-weight: 500;
+  border-bottom: 2px solid rgba(255, 77, 79, 0.4);
+  transition: all 0.2s;
+}
+.sensitive-highlight:hover {
+  background-color: rgba(255, 77, 79, 0.2);
 }
 
 .safe-highlight {
-  background-color: rgba(82, 196, 26, 0.15);
-  color: var(--color-safe);
-  padding: 1px 4px;
-  border-radius: 3px;
+  background-color: rgba(82, 196, 26, 0.12);
+  color: #16A34A;
+  padding: 1px 5px;
+  border-radius: 4px;
   font-weight: 500;
+  border-bottom: 2px solid rgba(82, 196, 26, 0.4);
+  transition: all 0.2s;
+}
+.safe-highlight:hover {
+  background-color: rgba(82, 196, 26, 0.2);
 }
 
-/* 状态栏 */
+/* ==================== 状态栏 ==================== */
 .status-bar {
   background-color: var(--color-bg-card);
   border-top: 1px solid var(--color-border);
-  padding: 10px 20px;
+  padding: 8px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-secondary);
+  flex-shrink: 0;
 }
 
 .status-bar-item {
@@ -211,84 +208,96 @@ body {
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: var(--color-safe);
+  flex-shrink: 0;
 }
-
 .status-dot.processing {
   background-color: var(--color-warning);
-  animation: pulse 1.5s infinite;
+  animation: pulse-dot 1.4s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
 }
 
-/* ==================== Ant Design 组件覆盖样式 ==================== */
-
-/* 按钮组 */
-.ant-btn-group {
-  gap: 12px;
-}
-
-/* 卡片样式微调 */
+/* ==================== Ant Design 覆盖 ==================== */
 .ant-card {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
+.ant-card:hover { box-shadow: var(--shadow-md) !important; }
 
-/* 单选按钮组 */
-.ant-radio-group {
-  display: flex;
-  gap: 16px;
+/* 单选按钮组美化 */
+.ant-radio-button-wrapper {
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  padding: 0 14px !important;
+}
+.ant-radio-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.ant-radio-group-solid .ant-radio-button-wrapper-checked {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 
 /* 分割线 */
 .section-divider {
-  margin: 24px 0;
+  margin: 20px 0;
   border: none;
   border-top: 1px solid var(--color-border);
 }
 
-/* ==================== 工具类 ==================== */
+/* 按钮 */
+.ant-btn-lg {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}
 
-/* Flexbox 工具 */
+/* 统计面板 */
+.ant-statistic-title { font-size: 12px !important; }
+.ant-statistic-content { font-weight: 600 !important; }
+
+/* 表格 */
+.ant-table-tbody > tr:hover > td { background-color: var(--color-bg-hover) !important; cursor: pointer; }
+.ant-table-small .ant-table-thead > tr > th { font-size: 11px !important; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* 标签 */
+.ant-tag { border-radius: 4px !important; font-size: 12px !important; }
+
+/* ==================== 工具类 ==================== */
 .flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .flex-between {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* 文字省略 */
-.text-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* ==================== 滚动条 ==================== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background-color: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background-color: var(--color-text-muted); }
 
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* ==================== 动画 ==================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+.fade-in-up { animation: fadeInUp 0.3s ease forwards; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ==================== 暗色模式适配 ==================== */
+.dark .ant-card { background-color: var(--color-bg-card) !important; }
+.dark .ant-table { background-color: transparent !important; }
+.dark .ant-collapse-ghost > .ant-collapse-item > .ant-collapse-header { color: var(--color-text-secondary); }
 
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-text-muted);
+/* ==================== 响应式 ==================== */
+@media (max-width: 1200px) {
+  .preview-container { grid-template-columns: 1fr; }
 }
