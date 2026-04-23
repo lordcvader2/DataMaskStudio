@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DataMask Studio — 本地离线敏感数据脱敏工具</title>
+  <meta name="description" content="DataMask Studio 是一款本地离线运行的敏感数据脱敏桌面工具，支持 21 种敏感类型检测、4 种脱敏策略、6 种文件格式，数据不出本机。" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #1890FF;
+      --blue-dark: #096DD9;
+      --blue-light: #E6F7FF;
+      --green: #52C41A;
+      --red: #FF4D4F;
+      --orange: #FA8C16;
+      --purple: #722ED1;
+      --bg: #F5F7FA;
+      --card: #FFFFFF;
+      --text: #1F2937;
+      --muted: #6B7280;
+      --border: #E5E7EB;
+    }
+    body { font-family: 'Microsoft YaHei', 'PingFang SC', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+    /* ── Hero ── */
+    .hero { background: linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #0F172A 100%); color: white; padding: 80px 24px 60px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(24,144,255,0.25) 0%, transparent 70%); }
+    .hero-badge { display: inline-block; background: rgba(24,144,255,0.2); border: 1px solid rgba(24,144,255,0.4); color: #60A5FA; padding: 4px 14px; border-radius: 20px; font-size: 13px; margin-bottom: 20px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; margin-bottom: 16px; position: relative; }
+    .hero h1 span { color: #60A5FA; }
+    .hero p { font-size: 1.1rem; color: #94A3B8; max-width: 560px; margin: 0 auto 32px; position: relative; }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(24,144,255,0.4); }
+    .btn-outline { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    .hero-stats { display: flex; gap: 40px; justify-content: center; margin-top: 48px; flex-wrap: wrap; position: relative; }
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 2rem; font-weight: 700; color: #60A5FA; }
+    .hero-stat-label { font-size: 13px; color: #94A3B8; margin-top: 4px; }
+
+    /* ── Section ── */
+    .section { padding: 64px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-title { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 8px; }
+    .section-sub { text-align: center; color: var(--muted); margin-bottom: 40px; font-size: 1rem; }
+
+    /* ── Feature Grid ── */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .feature-card { background: var(--card); border-radius: 12px; padding: 24px; border: 1px solid var(--border); transition: all 0.2s; }
+    .feature-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-3px); }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; }
+    .feature-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ── Strategy Cards ── */
+    .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .strategy-card { background: var(--card); border-radius: 10px; padding: 20px; border: 1px solid var(--border); text-align: center; }
+    .strategy-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+    .strategy-name { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+    .strategy-example { font-family: monospace; font-size: 12px; background: #F3F4F6; padding: 6px 10px; border-radius: 6px; color: #374151; margin-bottom: 8px; }
+    .strategy-desc { font-size: 12px; color: var(--muted); }
+
+    /* ── Rule Tags ── */
+    .rule-section { background: var(--card); border-radius: 12px; padding: 28px; border: 1px solid var(--border); margin-bottom: 16px; }
+    .rule-category { font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .rule-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .rule-tag { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+    /* ── Steps ── */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+    .step { background: var(--card); border-radius: 10px; padding: 20px; border: 1px solid var(--border); text-align: center; position: relative; }
+    .step-num { width: 36px; height: 36px; background: var(--blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; margin: 0 auto 12px; }
+    .step-title { font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+    .step-desc { font-size: 12px; color: var(--muted); }
+
+    /* ── Download ── */
+    .download-section { background: linear-gradient(135deg, #0F172A, #1E3A5F); color: white; padding: 64px 24px; text-align: center; }
+    .download-section h2 { font-size: 2rem; margin-bottom: 12px; }
+    .download-section p { color: #94A3B8; margin-bottom: 32px; font-size: 1rem; }
+    .download-card { display: inline-block; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 24px 40px; margin-bottom: 24px; }
+    .download-filename { font-family: monospace; font-size: 1rem; color: #60A5FA; margin-bottom: 6px; }
+    .download-size { font-size: 13px; color: #94A3B8; }
+    .sys-req { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+    .sys-req-item { font-size: 13px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
+
+    /* ── Footer ── */
+    footer { background: #0F172A; color: #64748B; padding: 32px 24px; text-align: center; font-size: 13px; }
+    footer a { color: #60A5FA; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Divider ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ── Badge ── */
+    .new-badge { display: inline-block; background: #FFF7E6; color: #D46B08; border: 1px solid #FFD591; padding: 1px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 6px; vertical-align: middle; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 60px 16px 40px; }
+      .hero-stats { gap: 24px; }
+      .section { padding: 48px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-badge">v1.1.0 最新版本</div>
+  <h1>DataMask <span>Studio</span></h1>
+  <p>本地离线敏感数据脱敏工具 — 21 种检测类型，4 种脱敏策略，数据不出本机</p>
+  <div class="hero-btns">
+    <a href="https://github.com/lordcvader2/DataMaskStudio/releases/latest" class="btn btn-primary">
+      📦 立即下载 v1.1.0
+    </a>
+    <a href="https://github.com/lordcvader2/DataMaskStudio" class="btn btn-outline">
+      ⭐ GitHub
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">21</div><div class="hero-stat-label">敏感类型</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">4</div><div class="hero-stat-label">脱敏策略</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">6</div><div class="hero-stat-label">文件格式</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">100%</div><div class="hero-stat-label">本地离线</div></div>
+  </div>
+</section>
+
+<!-- ── Features ── -->
+<section class="section">
+  <h2 class="section-title">核心特性</h2>
+  <p class="section-sub">专为数据安全合规场景设计，开箱即用</p>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔌</div>
+      <div class="feature-title">完全离线运行</div>
+      <div class="feature-desc">无需联网，数据处理全程在本地完成。无追踪、无遥测、无第三方数据上报，隐私安全有保障。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <div class="feature-title">21 种敏感类型检测</div>
+      <div class="feature-desc">覆盖个人隐私、金融信息、设备网络、商业政务四大类别，自动识别手机号、身份证、银行卡、IP地址等。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎭</div>
+      <div class="feature-title">幂等假数据生成</div>
+      <div class="feature-desc">基于种子随机数生成器，相同原始值始终生成相同假数据，保证数据集内部一致性，适合开发测试场景。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔑</div>
+      <div class="feature-title">AES-256-GCM 可逆加密</div>
+      <div class="feature-desc">使用 PBKDF2（10万次迭代）派生密钥，随机 IV + 认证标签，保管密钥即可还原原始数据。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">实时统计面板</div>
+      <div class="feature-desc">处理后即时显示按类别统计的检测数量，保留最近 20 条处理历史，支持一键回看对比。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📁</div>
+      <div class="feature-title">多格式支持</div>
+      <div class="feature-desc">支持 Excel（含多工作表）、Word、CSV、JSON、XML、TXT，拖拽即可处理，无需额外配置。</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ── Detection Rules ── -->
+<section class="section">
+  <h2 class="section-title">检测规则库</h2>
+  <p class="section-sub">21 种敏感类型，覆盖主流合规场景</p>
+
+  <div class="rule-section">
+    <div class="rule-category" style="color:#FF6B6B">👤 个人隐私类（12种）</div>
+    <div class="rule-tags">
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">手机号</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">固定电话</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">身份证号</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">护照号</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">军官证号</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">中文姓名</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">生日日期</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">住址</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">邮编</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">QQ号</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">微信号</span>
+      <span class="rule-tag" style="background:#FFF1F0;color:#CF1322">邮箱</span>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-category" style="color:#FA8C16">💳 金融信息类（4种）</div>
+    <div class="rule-tags">
+      <span class="rule-tag" style="background:#FFF7E6;color:#D46B08">银行卡号</span>
+      <span class="rule-tag" style="background:#FFF7E6;color:#D46B08">信用卡CVV</span>
+      <span class="rule-tag" style="background:#FFF7E6;color:#D46B08">开户行</span>
+      <span class="rule-tag" style="background:#FFF7E6;color:#D46B08">银行预留手机</span>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-category" style="color:#13C2C2">🌐 设备/网络类（3种）</div>
+    <div class="rule-tags">
+      <span class="rule-tag" style="background:#E6FFFB;color:#006D75">IP地址</span>
+      <span class="rule-tag" style="background:#E6FFFB;color:#006D75">MAC地址</span>
+      <span class="rule-tag" style="background:#E6FFFB;color:#006D75">设备序列号</span>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-category" style="color:#722ED1">🏢 商业/政务类（3种）</div>
+    <div class="rule-tags">
+      <span class="rule-tag" style="background:#F9F0FF;color:#531DAB">营业执照号</span>
+      <span class="rule-tag" style="background:#F9F0FF;color:#531DAB">统一社会信用代码</span>
+      <span class="rule-tag" style="background:#F9F0FF;color:#531DAB">公司名称</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ── Strategies ── -->
+<section class="section">
+  <h2 class="section-title">脱敏策略</h2>
+  <p class="section-sub">四种策略，适应不同场景需求</p>
+  <div class="strategy-grid">
+    <div class="strategy-card">
+      <div class="strategy-badge" style="background:#E6F7FF;color:#096DD9">🔒 掩码遮蔽</div>
+      <div class="strategy-name">Mask</div>
+      <div class="strategy-example">138****5678</div>
+      <div class="strategy-desc">部分字符用 * 遮蔽，保留可读性，适合数据展示和报告分享</div>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-badge" style="background:#F6FFED;color:#389E0D">#️⃣ 哈希脱敏</div>
+      <div class="strategy-name">Hash (SHA-256)</div>
+      <div class="strategy-example">a1b2c3d4e5f6...</div>
+      <div class="strategy-desc">不可逆哈希，适合数据比对、统计分析等不需要还原的场景</div>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-badge" style="background:#FFF7E6;color:#D46B08">🎭 假数据替换</div>
+      <div class="strategy-name">Fake Data</div>
+      <div class="strategy-example">13812345678 → 19988888888</div>
+      <div class="strategy-desc">生成同类型假数据，幂等生成保证一致性，适合开发测试和数据交付</div>
+    </div>
+    <div class="strategy-card">
+      <div class="strategy-badge" style="background:#F9F0FF;color:#531DAB">🔑 可逆加密</div>
+      <div class="strategy-name">AES-256-GCM</div>
+      <div class="strategy-example">[🔒ENCRYPTED:...]</div>
+      <div class="strategy-desc">保管密钥可还原原始数据，适合需要数据恢复的场景</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- ── How to use ── -->
+<section class="section">
+  <h2 class="section-title">使用方法</h2>
+  <p class="section-sub">五步完成数据脱敏</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">启动程序</div>
+      <div class="step-desc">双击 DataMaskStudio.exe，无需安装</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">导入文件</div>
+      <div class="step-desc">拖拽文件到窗口，或点击选择文件</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">配置选项</div>
+      <div class="step-desc">选择脱敏强度（轻/中/重）和策略</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">预览对比</div>
+      <div class="step-desc">左右对比原始与脱敏结果，高亮标记</div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-title">保存结果</div>
+      <div class="step-desc">点击"保存文件"导出脱敏后的文件</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Download ── -->
+<section class="download-section">
+  <h2>立即下载</h2>
+  <p>免费开源，绿色便携，无需安装任何运行时</p>
+  <div class="download-card">
+    <div class="download-filename">📦 DataMaskStudio_v1.1.0_portable.zip</div>
+    <div class="download-size">约 163 MB · Windows x64 · 绿色便携版</div>
+  </div>
+  <br />
+  <a href="https://github.com/lordcvader2/DataMaskStudio/releases/latest" class="btn btn-primary" style="font-size:16px;padding:14px 36px">
+    📥 前往 GitHub Releases 下载
+  </a>
+  <div class="sys-req">
+    <div class="sys-req-item">🖥️ Windows 10 / 11 (x64)</div>
+    <div class="sys-req-item">💾 200MB 可用空间</div>
+    <div class="sys-req-item">🧠 推荐 4GB+ 内存</div>
+    <div class="sys-req-item">🔌 无需联网</div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <p>
+    <a href="https://github.com/lordcvader2/DataMaskStudio">DataMask Studio</a>
+    · MIT License
+    · Made with ❤️ for data privacy
+  </p>
+  <p style="margin-top:8px">
+    <a href="https://github.com/lordcvader2/DataMaskStudio/releases">Releases</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/lordcvader2/DataMaskStudio/issues">Issues</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/lordcvader2/DataMaskStudio/blob/main/README.md">文档</a>
+  </p>
+</footer>
+
+</body>
+</html>
